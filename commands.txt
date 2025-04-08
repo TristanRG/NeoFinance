@@ -1,0 +1,5 @@
+#To start django server
+python manage.py runserver
+
+Starts python environment
+venv\Scrips\Activate
