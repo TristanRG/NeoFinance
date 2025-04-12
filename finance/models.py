@@ -14,14 +14,17 @@ class Category(models.Model):
     color = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        unique_together = ('user', 'name')
+        unique_together = ('user', 'name', 'type')
 
     def __str__(self):
         return f"{self.name} ({self.type})"
 
+    def clean(self):
+        self.name = self.name.strip().title()
 
 class Transaction(models.Model):
     RECURRENCE_CHOICES = [('none', 'None'), ('weekly', 'Weekly'), ('monthly', 'Monthly')]
+    TYPE_CHOICES = [('income', 'Income'), ('expense', 'Expense')]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='transactions')
@@ -32,6 +35,7 @@ class Transaction(models.Model):
     date = models.DateTimeField(default=timezone.now)
     description = models.TextField(blank=True, null=True)
     recurrence = models.CharField(max_length=10, choices=RECURRENCE_CHOICES, default='none')
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='expense')
 
     def __str__(self):
         return f"{self.amount} - {self.category.name}"

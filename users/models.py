@@ -15,7 +15,6 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        UserProfile.objects.create(user=user)
         return user
 
     def create_superuser(self, email, username, password):
@@ -32,6 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     objects = CustomUserManager()
 
@@ -39,13 +39,5 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return self.email
+        return self.username  
 
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"Profile for {self.user.username}"

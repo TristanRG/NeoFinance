@@ -23,11 +23,28 @@ def transactions_view(request):
     elif request.method == 'POST':
         data = request.data.copy()
         data['user'] = str(user.id)
+
+        category_name = data.pop('category_name', None)
+        transaction_type = data.get('type')  
+
+        if not category_name or not transaction_type:
+            return Response({'error': 'category_name and type are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        category, created = Category.objects.get_or_create(
+            user=user,
+            name=category_name,
+            type=transaction_type,
+            defaults={'icon': 'default-icon', 'color': 'default-color'}  
+        )
+
+        data['category'] = str(category.id)
+
         serializer = TransactionSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
