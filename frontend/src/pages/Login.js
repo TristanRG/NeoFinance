@@ -21,10 +21,10 @@ export default function Login({ onLogin }) {
       localStorage.setItem('refresh_token', data.refresh);
       
       setAuth({
-        accessToken: data.access,
-        refreshToken: data.refresh,
+        access: data.access,
+        refresh: data.refresh,
         username: data.username,
-      });
+      });      
       
       navigate('/dashboard'); 
     } catch (error) {

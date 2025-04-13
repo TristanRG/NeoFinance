@@ -23,14 +23,36 @@ class Category(models.Model):
         self.name = self.name.strip().title()
 
 class Transaction(models.Model):
-    RECURRENCE_CHOICES = [('none', 'None'), ('weekly', 'Weekly'), ('monthly', 'Monthly')]
+    RECURRENCE_CHOICES = [('none', 'None'), ('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly')]
     TYPE_CHOICES = [('income', 'Income'), ('expense', 'Expense')]
+
+    CATEGORY_CHOICES = [
+        ("Food", "Food"),
+        ("Transport", "Transport"),
+        ("Utilities", "Utilities"),
+        ("Shopping", "Shopping"),
+        ("Entertainment", "Entertainment"),
+        ("Healthcare", "Healthcare"),
+        ("Salary", "Salary"),
+        ("Freelance", "Freelance")
+    ]
+
+    CATEGORY_COLORS = {
+        "Food": "#FF6384",
+        "Transport": "#36A2EB",
+        "Utilities": "#FFCE56",
+        "Shopping": "#4BC0C0",
+        "Entertainment": "#9966FF",
+        "Healthcare": "#FF9F40",
+        "Salary": "#00C49F",
+        "Freelance": "#FF4444",
+    }
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='transactions')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='transactions')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=10, default="EURO")
+    currency = models.CharField(max_length=10, default="EUR")
     converted_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
     description = models.TextField(blank=True, null=True)
@@ -38,7 +60,10 @@ class Transaction(models.Model):
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='expense')
 
     def __str__(self):
-        return f"{self.amount} - {self.category.name}"
+        return f"{self.amount} - {self.category}"
+
+    def get_category_color(self):
+        return self.CATEGORY_COLORS.get(self.category, "#000000") 
 
 
 class Budget(models.Model):

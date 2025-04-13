@@ -1,9 +1,15 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { logout as performLogout } from "../api/axios";
 
-const Navbar = ({ onLogout }) => {
-  const { auth } = useContext(AuthContext);
+const Navbar = () => {
+  const { auth, setAuth } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    setAuth(null);        
+    performLogout();      
+  };
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
@@ -30,7 +36,7 @@ const Navbar = ({ onLogout }) => {
             <span>{auth.username}</span>
             <span className="text-gray-400">|</span>
             <button
-              onClick={onLogout}
+              onClick={handleLogout}
               className="hover:text-[#2ecfe3] focus:outline-none"
             >
               Logout

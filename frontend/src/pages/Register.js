@@ -21,8 +21,8 @@ export default function Register() {
       setAuth({
         access: res.access,
         refresh: res.refresh,
-        user: res.user,
-      });
+        username: res.username,
+      });      
 
       navigate('/dashboard');
     } catch (err) {
