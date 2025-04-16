@@ -43,6 +43,17 @@ const TransactionsPage = () => {
     }
   };
 
+  const handleDelete = async (transactionId) => {
+    try {
+      await axios.delete(`/finance/transactions/${transactionId}/`);
+      fetchTransactions(); 
+      setOpenMenuIndex(null); 
+    } catch (error) {
+      console.error("Failed to delete transaction:", error);
+    }
+  };
+  
+
   return (
     
     <div className="p-6">
@@ -113,7 +124,12 @@ const TransactionsPage = () => {
                 <MoreVertical className="cursor-pointer" size={18} onClick={() => toggleMenu(idx)} />
                 {openMenuIndex === idx && (
                   <div className="absolute right-0 top-6 bg-white border rounded-md shadow-md z-10 w-28">
-                    <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Delete</button>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                      onClick={() => handleDelete(txn.id)}
+                    >
+                      Delete
+                    </button>
                   </div>
                 )}
               </div>
