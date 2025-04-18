@@ -93,7 +93,7 @@ const TransactionsPage = () => {
             <div>Date</div>
             <div>Time</div>
             <div>Transaction ID</div>
-            <div>Name</div>
+            <div>Description</div>
             <div>Amount</div>
             <div>Type</div>
             <div></div>

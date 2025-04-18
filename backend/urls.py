@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from users.views import RegisterView, LoginView, UserDetailView
 from finance import views
+from assistant import views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -31,4 +32,5 @@ urlpatterns = [
     path('api/refresh-token/', TokenRefreshView.as_view(), name='token_refresh'),    
     path('finance/', include('finance.urls')),
     path('users/', include('users.urls')),    
-    ]
+    path('chat/', include('assistant.urls')),    
+]

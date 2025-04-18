@@ -31,6 +31,7 @@ const DashboardPage = () => {
   const [monthlyTrends, setMonthlyTrends] = useState([]);
   const [pieData, setPieData] = useState([]);
   const [totalExpense, setTotalExpense] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,6 +137,35 @@ const DashboardPage = () => {
       }
     };
 
+    const renderActiveShape = (props) => {
+      const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } = props;
+    
+      return (
+        <g>
+          <text x={cx} y={cy - 10} textAnchor="middle" fill={fill} className="text-sm font-semibold">
+            {payload.name}
+          </text>
+          <text x={cx} y={cy + 10} textAnchor="middle" fill={fill} className="text-xs">
+            €{value.toFixed(2)}
+          </text>
+          <path
+            d={`
+              M ${cx},${cy}
+              L ${cx + outerRadius * Math.cos((startAngle * Math.PI) / 180)},
+                ${cy + outerRadius * Math.sin((startAngle * Math.PI) / 180)}
+              A ${outerRadius} ${outerRadius} 0 ${endAngle - startAngle > 180 ? 1 : 0} 1 
+                ${cx + outerRadius * Math.cos((endAngle * Math.PI) / 180)},
+                ${cy + outerRadius * Math.sin((endAngle * Math.PI) / 180)}
+              Z
+            `}
+            fill={fill}
+            className="scale-110 origin-center transition-transform duration-300"
+          />
+        </g>
+      );
+    };
+    
+
     fetchData();
   }, []);
 
@@ -178,10 +208,14 @@ const DashboardPage = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <button className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+              <button className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+                      onClick={() => navigate('/transactions')}
+              >
                 Add more funds
               </button>
-              <button className="flex-1 bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition">
+              <button className="flex-1 bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition"
+                      onClick={() => navigate('/assistant')}
+              >
                 Talk about your spendings
               </button>
             </div>
