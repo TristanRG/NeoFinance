@@ -5,8 +5,8 @@ import {
   Cell,
   Tooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -116,7 +116,6 @@ const DashboardPage = () => {
         setUserInfo(userRes.data);
         setTotalExpense(totalExp);
 
-        // Expense comparison message
         if (lastMonthExp === 0 && expense > 0) {
           setExpenseComparisonText("No expenses last month");
         } else if (expense === 0 && lastMonthExp > 0) {
@@ -136,36 +135,7 @@ const DashboardPage = () => {
         setLoading(false);
       }
     };
-
-    const renderActiveShape = (props) => {
-      const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } = props;
     
-      return (
-        <g>
-          <text x={cx} y={cy - 10} textAnchor="middle" fill={fill} className="text-sm font-semibold">
-            {payload.name}
-          </text>
-          <text x={cx} y={cy + 10} textAnchor="middle" fill={fill} className="text-xs">
-            €{value.toFixed(2)}
-          </text>
-          <path
-            d={`
-              M ${cx},${cy}
-              L ${cx + outerRadius * Math.cos((startAngle * Math.PI) / 180)},
-                ${cy + outerRadius * Math.sin((startAngle * Math.PI) / 180)}
-              A ${outerRadius} ${outerRadius} 0 ${endAngle - startAngle > 180 ? 1 : 0} 1 
-                ${cx + outerRadius * Math.cos((endAngle * Math.PI) / 180)},
-                ${cy + outerRadius * Math.sin((endAngle * Math.PI) / 180)}
-              Z
-            `}
-            fill={fill}
-            className="scale-110 origin-center transition-transform duration-300"
-          />
-        </g>
-      );
-    };
-    
-
     fetchData();
   }, []);
 
@@ -319,23 +289,19 @@ const DashboardPage = () => {
   </div>
 </div>
 
-            <h2 className="text-xl font-semibold mt-6">Statistics</h2>
-            <div className="w-full h-[240px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyTrends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="expense"
-                    stroke="#8884d8"
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            <div className="mt-6 col-span-2 h-[300px] bg-white rounded-2xl shadow-md p-6">
+  <h2 className="text-lg font-semibold mb-4">Monthly Spending</h2>
+  <ResponsiveContainer width="100%" height="100%">
+    <BarChart data={monthlyTrends}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+      <YAxis tickFormatter={(value) => `€${value}`} />
+      <Tooltip formatter={(value) => `€${value}`} />
+      <Bar dataKey="expense" fill="#2ecfe3" radius={[4, 4, 0, 0]} />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
+
           </div>
         </div>
       </div>
