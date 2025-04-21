@@ -55,7 +55,7 @@ const TransactionsPage = () => {
   
 
   return (
-    
+    <div className="min-h-screen" style={{ backgroundColor: "#e4e6e7" }}>
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-6">Manage Transactions</h2>
 
@@ -87,7 +87,7 @@ const TransactionsPage = () => {
       {/* Table Container */}
       <div className="overflow-x-auto">
         {/* Header */}
-        <div className="min-w-[1100px] bg-gray-100 rounded px-8 py-4 mb-2 shadow-sm">
+        <div className="min-w-[1100px] bg-white rounded px-8 py-4 mb-2 shadow-sm">
           <div className="grid grid-cols-[1rem_140px_120px_280px_220px_140px_140px_40px] gap-x-24 text-xs font-semibold text-gray-500 text-center">
             <div></div>
             <div>Date</div>
@@ -143,6 +143,7 @@ const TransactionsPage = () => {
         onClose={() => setShowModal(false)}
         onSubmit={handleAddTransaction}
       />
+    </div>
     </div>
   );
 };
