@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import ReportsIncome from '../components/ReportsIncome'; // adjust path if needed
 
 export default function Reports() {
   const [searchParams] = useSearchParams();
@@ -8,7 +9,6 @@ export default function Reports() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // Example logic based on selected view
     if (view === 'income') {
       console.log("Show only income data");
     } else if (view === 'expenses') {
@@ -17,17 +17,19 @@ export default function Reports() {
       console.log("Show all data");
     }
 
-    // Fetch and filter data as needed here
+    // Fetch and filter data as needed
   }, [view]);
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4 capitalize">{view} Report</h2>
-      <div>
-        {/* Render filtered data here */}
-        {/* For now, you can just show a placeholder */}
+
+      {/* Conditional rendering based on `view` */}
+      {view === 'income' ? (
+        <ReportsIncome />
+      ) : (
         <p>This is the {view} report view.</p>
-      </div>
+      )}
     </div>
   );
 }
