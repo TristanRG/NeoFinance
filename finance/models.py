@@ -27,25 +27,41 @@ class Transaction(models.Model):
     TYPE_CHOICES = [('income', 'Income'), ('expense', 'Expense')]
 
     CATEGORY_CHOICES = [
+        #Expenses
         ("Food", "Food"),
         ("Transport", "Transport"),
         ("Utilities", "Utilities"),
         ("Shopping", "Shopping"),
         ("Entertainment", "Entertainment"),
         ("Healthcare", "Healthcare"),
+        
+        #Incomes
         ("Salary", "Salary"),
-        ("Freelance", "Freelance")
+        ("Freelance", "Freelance"),
+        ("Investments", "Investments"),
+        ("Consulting", "Consulting"),
+        ("Online Sales", "Online Sales"),
+        ("Gifts", "Gifts"),
+
+
     ]
 
     CATEGORY_COLORS = {
-        "Food": "#FF6384",
-        "Transport": "#36A2EB",
-        "Utilities": "#FFCE56",
-        "Shopping": "#4BC0C0",
-        "Entertainment": "#9966FF",
-        "Healthcare": "#FF9F40",
-        "Salary": "#00C49F",
-        "Freelance": "#FF4444",
+    #Expenses
+    "Food": "#FF6384",
+    "Transport": "#36A2EB",
+    "Utilities": "#FFCE56",
+    "Shopping": "#4BC0C0",
+    "Entertainment": "#9966FF",
+    "Healthcare": "#FF9F40",
+
+    # Incomes
+    "Salary": "#00C49F",
+    "Freelance": "#FF4444",
+    "Investments": "#8BC34A",
+    "Consulting": "#4CAF50",
+    "Online Sales": "#2196F3",
+    "Gifts": "#9C27B0",
     }
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
