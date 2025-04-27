@@ -28,6 +28,8 @@ def transactions_view(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)  
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -44,7 +46,8 @@ def delete_transaction(request, transaction_id):
 @permission_classes([IsAuthenticated])
 def update_transaction(request, transaction_id):
     transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
-
+    
+    print(request.data)
     serializer = TransactionSerializer(transaction, data=request.data, partial=True, context={'request': request})
     
     if serializer.is_valid():

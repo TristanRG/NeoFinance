@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 
-const CATEGORY_CHOICES = [
+const EXPENSE_CATEGORIES = [
   "Food",
   "Transport",
   "Utilities",
   "Shopping",
   "Entertainment",
   "Healthcare",
+];
+
+const INCOME_CATEGORIES = [
   "Salary",
   "Freelance",
+  "Investments",
+  "Consulting",
+  "Online Sales",
+  "Gifts",
 ];
 
 const RECURRENCE_OPTIONS = [
@@ -23,13 +30,23 @@ const AddTransactionModal = ({ isOpen, onClose, onSubmit }) => {
     amount: "",
     type: "expense",
     recurrence: "none",
-    category: CATEGORY_CHOICES[0],
+    category: EXPENSE_CATEGORIES[0], 
     description: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "type") {
+      const newCategories = value === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+      setForm((prev) => ({
+        ...prev,
+        type: value,
+        category: newCategories[0],
+      }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = () => {
@@ -39,18 +56,20 @@ const AddTransactionModal = ({ isOpen, onClose, onSubmit }) => {
       description: form.description,
       type: form.type,
       recurrence: form.recurrence,
-      category: form.category,
+      category: form.category, 
     });
     setForm({
       amount: "",
       description: "",
       type: "expense",
       recurrence: "none",
-      category: CATEGORY_CHOICES[0],
+      category: EXPENSE_CATEGORIES[0],
     });
   };
 
   if (!isOpen) return null;
+
+  const availableCategories = form.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -111,7 +130,7 @@ const AddTransactionModal = ({ isOpen, onClose, onSubmit }) => {
             onChange={handleChange}
             className="border rounded px-3 py-2"
           >
-            {CATEGORY_CHOICES.map((cat) => (
+            {availableCategories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
               </option>
