@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Transaction
 from .serializers import TransactionSerializer
+from django.shortcuts import get_object_or_404
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -37,3 +38,17 @@ def delete_transaction(request, transaction_id):
     transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
     transaction.delete()
     return Response({'message': 'Transaction deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def update_transaction(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+
+    serializer = TransactionSerializer(transaction, data=request.data, partial=True, context={'request': request})
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
