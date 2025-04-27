@@ -76,16 +76,21 @@ const AddTransactionModal = ({ isOpen, onClose, onSubmit }) => {
       <div className="bg-white rounded-lg shadow-lg p-6 w-[400px] space-y-4">
         <h3 className="text-lg font-semibold">Add New Transaction</h3>
         <div className="flex flex-col space-y-3">
-          <input
-            name="amount"
-            type="number"
-            step="0.01"
-            placeholder="Amount (e.g. 50.00)"
-            value={form.amount}
-            onChange={handleChange}
-            className="border rounded px-3 py-2"
-          />
+          {/* Amount */}
+          <div>
+            <label htmlFor="amount" className="block text-sm font-medium">Amount</label>
+            <input
+              name="amount"
+              type="number"
+              step="0.01"
+              placeholder="Amount (e.g. 50.00)"
+              value={form.amount}
+              onChange={handleChange}
+              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#2ecfe3]"
+            />
+          </div>
 
+          {/* Type (Income/Expense) */}
           <div className="flex gap-4">
             <label className="flex items-center">
               <input
@@ -111,40 +116,53 @@ const AddTransactionModal = ({ isOpen, onClose, onSubmit }) => {
             </label>
           </div>
 
-          <select
-            name="recurrence"
-            value={form.recurrence}
-            onChange={handleChange}
-            className="border rounded px-3 py-2"
-          >
-            {RECURRENCE_OPTIONS.map((rec) => (
-              <option key={rec.value} value={rec.value}>
-                {rec.label}
-              </option>
-            ))}
-          </select>
+          {/* Recurrence */}
+          <div>
+            <label htmlFor="recurrence" className="block text-sm font-medium">Recurrence</label>
+            <select
+              name="recurrence"
+              value={form.recurrence}
+              onChange={handleChange}
+              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#2ecfe3]"
+            >
+              {RECURRENCE_OPTIONS.map((rec) => (
+                <option key={rec.value} value={rec.value}>
+                  {rec.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            className="border rounded px-3 py-2"
-          >
-            {availableCategories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          {/* Category */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium">Category</label>
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#2ecfe3]"
+            >
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <textarea
-            name="description"
-            placeholder="Description (optional)"
-            value={form.description}
-            onChange={handleChange}
-            className="border rounded px-3 py-2"
-          />
+          {/* Description */}
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium">Description (Optional)</label>
+            <textarea
+              name="description"
+              placeholder="Description (optional)"
+              value={form.description}
+              onChange={handleChange}
+              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#2ecfe3]"
+            />
+          </div>
         </div>
+
         <div className="flex justify-end gap-2 mt-4">
           <button
             onClick={onClose}
@@ -154,7 +172,7 @@ const AddTransactionModal = ({ isOpen, onClose, onSubmit }) => {
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+            className="px-4 py-2 bg-[#2ecfe3] text-white rounded hover:bg-[#2bb2a8]"
           >
             Add
           </button>
