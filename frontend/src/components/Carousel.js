@@ -26,11 +26,10 @@ const Carousel = ({ className = '' }) => {
         {images.map((img, index) => (
           <div key={index}>
             <img
-  src={img}
-  alt={`dashboard ${index + 1}`}
-  className={`w-full h-[180px] object-contain ${className}`}
-/>
-
+              src={img}
+              alt={`dashboard ${index + 1}`}
+              className={`w-full h-full object-cover block ${className}`}
+            />
           </div>
         ))}
       </Slider>
