@@ -7,3 +7,4 @@ djangorestframework-simplejwt
 pillow
 openai
 dotenv
+requests
