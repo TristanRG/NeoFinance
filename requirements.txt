@@ -8,3 +8,5 @@ pillow
 openai
 dotenv
 requests
+django-apscheduler
+django-scheduler

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'users',
     'finance',
     'assistant',
+    'django_apscheduler',
+    'scheduler.apps.SchedulerConfig',
 ]
 
 
@@ -81,6 +83,8 @@ TEMPLATES = [
         },
     },
 ]
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
