@@ -4,6 +4,7 @@ import logo from '../assets/login.png';
 import { Mail, User, Lock } from 'lucide-react';
 import { registerUser } from '../api/auth'; 
 import { AuthContext } from '../context/AuthContext';
+import GuestAuth from '../context/GuestAuth';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -17,17 +18,16 @@ export default function Register() {
     e.preventDefault();
     try {
       const res = await registerUser(email, username, password);
-
+      localStorage.setItem('access_token', res.access);
+      localStorage.setItem('refresh_token', res.refresh);
       setAuth({
         access: res.access,
         refresh: res.refresh,
         username: res.username,
       });      
-
       navigate('/dashboard');
     } catch (err) {
       setError('Registration failed, please try again.');
-      console.error(err);
     }
   };
 
@@ -105,6 +105,7 @@ export default function Register() {
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
+              {/* Sign Up */}
               <button
                 type="submit"
                 className="w-full bg-white text-[#1a1a1a] border border-gray-300 py-2 rounded-md hover:bg-[#2ecfe3] transition"
@@ -114,12 +115,8 @@ export default function Register() {
 
               <div className="text-center text-gray-400 text-sm">or</div>
 
-              <button
-                type="button"
-                className="w-full bg-white text-[#1a1a1a] border border-gray-300 py-2 rounded-md hover:bg-[#2ecfe3] transition"
-              >
-                Continue as guest
-              </button>
+              {/* Continue as Guest */}
+              <GuestAuth />
 
               <div className="text-center text-sm mt-4 text-gray-500">
                 Already have an account?{' '}

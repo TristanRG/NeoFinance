@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { loginUser } from '../api/auth'; 
 import logo from '../assets/login.png';
 import { Mail, Lock } from 'lucide-react';
+import GuestAuth from '../context/GuestAuth';
 
 export default function Login({ onLogin }) {
   const { setAuth } = useContext(AuthContext); 
