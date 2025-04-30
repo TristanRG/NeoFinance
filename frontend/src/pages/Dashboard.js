@@ -69,7 +69,6 @@ const DashboardPage = () => {
 
           if (!monthMap[label]) monthMap[label] = 0;
           if (t.type === "expense") {
-            
             monthMap[label] += parseFloat(t.amount);
 
             const cat = t.category || "Uncategorized";
@@ -149,7 +148,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#e4e6e7" }}>
+    <div className=" bg-gray-50 min-h-screen">
       <div className="p-8 pt-6">
         <h1 className="text-2xl font-semibold mb-8 mt-6">
           Good Day, {userInfo ? userInfo.username : "User"}
@@ -190,16 +189,9 @@ const DashboardPage = () => {
               </button>
             </div>
             <div className="mt-4 h-[200px]">
-              <Carousel className="max-h-[180px] w-full object-contain" />
+              <Carousel className="max-h-[270px] w-full object-contain" />
             </div>
-            <div className="bg-gray-100 p-4 rounded-xl text-center text-sm mt-4">
-              <p className="mb-2">Get Additional 15% Cashback</p>
-              <button className="bg-blue-100 text-blue-500 text-xs px-3 py-1 rounded-full">
-                6.4M Claimed
-              </button>
-              <p className="mt-2 text-xs">Expiry Date: May 25, 2025</p>
             </div>
-          </div>
 
           {/* Transactions */}
           <div className="p-6">
