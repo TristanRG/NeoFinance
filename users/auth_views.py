@@ -1,0 +1,5 @@
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .auth_serializers import GuestTokenObtainPairSerializer
+
+class GuestTokenObtainPairView(TokenObtainPairView):
+    serializer_class = GuestTokenObtainPairSerializer
