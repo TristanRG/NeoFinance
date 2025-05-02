@@ -99,12 +99,8 @@ export default function Login({ onLogin }) {
 
               <div className="text-center text-gray-400 text-sm">or</div>
 
-              <button
-                type="button"
-                className="w-full bg-white text-[#1a1a1a] border border-gray-300 py-2 rounded-md hover:bg-[#2ecfe3] transition"
-              >
-                Continue as guest
-              </button>
+              {/* Continue as Guest */}
+              <GuestAuth />
 
               <div className="text-center text-sm mt-4 text-gray-500">
                 New to NeoFinance? <a href="/register" className="text-blue-500 hover:underline">Create Account</a>

@@ -1,11 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { logout as performLogout } from "../api/axios";
 import ReportsMenu from "./ReportsMenu";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const { auth, setAuth } = useContext(AuthContext);
+  const [logoError, setLogoError] = useState(false);
 
   const handleLogout = () => {
     setAuth(null);
@@ -14,10 +16,24 @@ const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
-      {/* Left: Logo */}
-      <div className="text-2xl font-bold">
-        <span className="text-black">Neo</span>
-        <span className="text-[#2ecfe3]">Finance</span>
+      {/* Left: Logo or fallback text */}
+      <div className="flex items-center">
+        <Link to="/home" className="flex items-center">
+          {!logoError ? (
+            <img
+              src={logo}
+              alt="NeoFinance Logo"
+              className="h-8 w-auto"
+              style={{ transform: "scale(5)", transformOrigin: "left center" }}
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <div className="text-2xl font-bold">
+              <span className="text-black">Neo</span>
+              <span className="text-[#2ecfe3]">Finance</span>
+            </div>
+          )}
+        </Link>
       </div>
 
       {/* Middle: Navigation Links */}
@@ -29,18 +45,17 @@ const Navbar = () => {
 
         {/* Reports Dropdown */}
         <div className="relative group">
-          <div className="flex items-center justify-center cursor-pointer hover:text-[#2ecfe3]">
-          <span>Reports</span>
-          <svg className="w-4 h-4 ml-1 fill-current" viewBox="0 0 20 20">
-        <path d="M5.25 7.75L10 12.5l4.75-4.75" />
-        </svg>
-    </div>
-  <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block bg-white border rounded shadow-lg z-50">
-    <ReportsMenu />
-  </div>
-  </div>
-</div>
-
+          <div className="flex items-center cursor-pointer hover:text-[#2ecfe3]">
+            <span>Reports</span>
+            <svg className="w-4 h-4 ml-1 fill-current" viewBox="0 0 20 20">
+              <path d="M5.25 7.75L10 12.5l4.75-4.75" />
+            </svg>
+          </div>
+          <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block bg-white border rounded shadow-lg z-50">
+            <ReportsMenu />
+          </div>
+        </div>
+      </div>
 
       {/* Right: Auth Section */}
       <div className="flex items-center space-x-4 text-sm font-medium text-gray-700">
@@ -59,7 +74,7 @@ const Navbar = () => {
           <>
             <Link to="/login" className="hover:text-[#2ecfe3]">Login</Link>
             <span className="text-gray-400">|</span>
-            <Link to="/register" className="text-gray-800 hover:text-[#2ecfe3]">Register</Link>
+            <Link to="/register" className="hover:text-[#2ecfe3]">Register</Link>
           </>
         )}
       </div>
