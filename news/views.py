@@ -6,7 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-
+import requests
+from .models import NewsArticle
+from django.http import JsonResponse
+from .models import NewsArticle
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
@@ -58,3 +61,26 @@ class NewsListView(APIView):
                 {'error': str(e)},
                 status=status.HTTP_502_BAD_GATEWAY
             )
+
+def fetch_and_store_news():
+    api_key = os.getenv('NEWS_API_KEY')
+    res = requests.get(f'https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}')
+    if res.status_code == 200:
+        articles = res.json().get('articles', [])[:9]
+        valid_articles = [a for a in articles if a.get("urlToImage")]
+
+        NewsArticle.objects.all().delete()
+
+        for article in valid_articles[:9]:
+            NewsArticle.objects.create(
+                title=article["title"],
+                description=article.get("description"),
+                url=article["url"],
+                image=article["urlToImage"],
+                source=article.get("source", "Unknown"),
+                published_at=article["publishedAt"]
+            )
+
+def fallback_news(request):
+    articles = list(NewsArticle.objects.all().values())
+    return JsonResponse({"articles": articles})

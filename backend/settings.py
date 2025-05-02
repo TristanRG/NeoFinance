@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'assistant',
     'django_apscheduler',
     'scheduler.apps.SchedulerConfig',
+    'news',
 ]
 
 
