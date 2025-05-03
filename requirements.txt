@@ -10,3 +10,5 @@ dotenv
 requests
 django-apscheduler
 django-scheduler
+pytest
+pytest-django
