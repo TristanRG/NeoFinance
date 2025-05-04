@@ -35,4 +35,5 @@ urlpatterns = [
     path('users/', include('users.urls')),    
     path('chat/', include('assistant.urls')),    
     path('news/', include('news.urls')),
+    path('assistant/', include('assistant.urls'))
 ]
