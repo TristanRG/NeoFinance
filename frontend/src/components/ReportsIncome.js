@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
-
 import {
   LineChart,
   Line,

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import NewsFeed from '../components/NewsFeed';
-import { AuthContext } from '../context/AuthContext'; // make sure the path is correct
+import { AuthContext } from '../context/AuthContext'; 
 
 export default function HomePage() {
   const features = [
