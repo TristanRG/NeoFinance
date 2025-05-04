@@ -3,6 +3,7 @@ import { MoreVertical, Plus, ChevronsUpDown, Edit, Trash } from "lucide-react";
 import axios from "../api/axios";
 import AddTransactionModal from "../components/AddTransactionModal";
 import EditTransactionModal from "../components/EditTransactionModal";
+import TransactionsToCsv from "../components/TransactionsToCsv";
 
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState([]);
@@ -131,6 +132,10 @@ const TransactionsPage = () => {
             </div>
           </div>
 
+          <div className="flex items-center gap-4">
+          <TransactionsToCsv transactions={sortedTransactions} />
+
+          {/* Add Transaction button */}
           <button
             className="flex items-center gap-2 px-4 py-2 bg-[#2ecfe3] text-white rounded hover:bg-[#24b9cc] transition"
             onClick={() => setShowAddModal(true)}
@@ -138,6 +143,7 @@ const TransactionsPage = () => {
             <Plus size={18} />
             Add Transaction
           </button>
+          </div>
         </div>
 
         {/* Table */}
