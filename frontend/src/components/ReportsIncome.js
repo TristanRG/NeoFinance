@@ -17,7 +17,6 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -30,7 +29,6 @@ const ReportsIncome = () => {
   const [prevMonth, setPrevMonth] = useState(0);
   const [prevWeek, setPrevWeek] = useState(0);
   const [monthlyData, setMonthlyData] = useState([]);
-  const [monthlyData2024, setMonthlyData2024] = useState([]);
   const [radarData, setRadarData] = useState([]);
 
   const incomeCategories = [
@@ -48,16 +46,14 @@ const ReportsIncome = () => {
         const res = await axios.get("/finance/transactions/");
         const transactions = res.data;
         const now = new Date();
-
         const currentYear = now.getFullYear();
 
+        // date boundaries
         const startOfMonth = new Date(currentYear, now.getMonth(), 1);
-        const startOfLastMonth = new Date(currentYear, now.getMonth() - 1, 1);
-        const endOfLastMonth = new Date(currentYear, now.getMonth(), 0);
-
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
-
+        const startOfLastMonth = new Date(currentYear, now.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(currentYear, now.getMonth(), 0);
         const startOfLastWeek = new Date(startOfWeek);
         startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
         const endOfLastWeek = new Date(startOfWeek);
@@ -81,6 +77,7 @@ const ReportsIncome = () => {
         transactions.forEach((t) => {
           const date = new Date(t.date);
           const amount = parseFloat(t.amount);
+
           if (t.type === "income") {
             if (date.getFullYear() === currentYear) {
               yearTotal += amount;
@@ -88,7 +85,6 @@ const ReportsIncome = () => {
               if (date >= startOfWeek) weekTotal += amount;
               monthlySums[date.getMonth()] += amount;
             }
-
             if (date.getFullYear() === currentYear - 1) {
               lastYearTotal += amount;
               if (date >= startOfLastMonth && date <= endOfLastMonth)
@@ -97,19 +93,12 @@ const ReportsIncome = () => {
                 lastWeekTotal += amount;
               monthlySums2024[date.getMonth()] += amount;
             }
-
             if (incomeCategories.includes(t.category)) {
               categoryTotals[t.category] += amount;
             }
           }
         });
 
-        const radarFormatted = incomeCategories.map((cat) => ({
-          subject: cat,
-          A: categoryTotals[cat],
-        }));
-
-        setRadarData(radarFormatted);
         setIncomeYear(yearTotal);
         setIncomeMonth(monthTotal);
         setIncomeWeek(weekTotal);
@@ -121,13 +110,20 @@ const ReportsIncome = () => {
           "Jan", "Feb", "Mar", "Apr", "May", "Jun",
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
-        const formattedMonthlyData = monthLabels.map((label, index) => ({
-          month: label,
-          income2025: monthlySums[index],
-          income2024: monthlySums2024[index],
-        }));
+        setMonthlyData(
+          monthLabels.map((label, idx) => ({
+            month: label,
+            income2025: monthlySums[idx],
+            income2024: monthlySums2024[idx],
+          }))
+        );
 
-        setMonthlyData(formattedMonthlyData);
+        setRadarData(
+          incomeCategories.map((cat) => ({
+            subject: cat,
+            A: categoryTotals[cat],
+          }))
+        );
       } catch (err) {
         console.error("Error fetching income data:", err);
       }
@@ -136,7 +132,7 @@ const ReportsIncome = () => {
     fetchIncomeData();
   }, []);
 
-  const formatCurrency = (amount) => `€${amount.toFixed(2)}`;
+  const formatCurrency = (amt) => `€${amt.toFixed(2)}`;
   const getChange = (current, previous) => {
     if (previous === 0) return { percent: 100, direction: "up" };
     const change = ((current - previous) / previous) * 100;
@@ -167,41 +163,43 @@ const ReportsIncome = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
         {[
-          { label: "This Year", value: incomeYear, change: yearChange },
+          { label: "This Year",  value: incomeYear,  change: yearChange  },
           { label: "This Month", value: incomeMonth, change: monthChange },
-          { label: "This Week", value: incomeWeek, change: weekChange },
+          { label: "This Week",  value: incomeWeek,  change: weekChange },
         ].map(({ label, value, change }, idx) => (
           <motion.div
             key={label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * idx }}
-            className={`p-6 rounded-xl shadow flex flex-col gap-2 ${
-              idx === 1 ? "bg-green-50" : "bg-white"
-            }`}
+            transition={{ delay: 0.1 * (idx + 1) }}
+            className="p-6 rounded-xl shadow bg-white flex flex-col items-center"
           >
-            <h3 className="text-gray-500 text-sm">Total Income {label}</h3>
-            <h2 className="text-2xl font-bold">{formatCurrency(value)}</h2>
-            <div className="flex items-center gap-1">
+            <h3 className="text-gray-500 text-sm mb-2">
+              {`Total Income ${label}`}
+            </h3>
+            <div className="text-2xl font-bold text-green-500">
+              {formatCurrency(value)}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
               <AnimatedArrow direction={change.direction} />
               <span
-                className={`${
-                  change.direction === "up"
-                    ? "text-green-500"
-                    : "text-red-500"
-                } text-sm`}
+                className={`text-sm ${
+                  change.direction === "up" ? "text-green-500" : "text-red-500"
+                }`}
               >
                 {change.direction === "up" ? "+" : "-"}
-                {change.percent}% vs last {label.split(" ")[1].toLowerCase()}
+                {change.percent}% vs last{" "}
+                {label.split(" ")[1].toLowerCase()}
               </span>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Line Chart */}
+      {/* Line + Radar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
         <div className="col-span-2 bg-white p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-4">Earnings</h2>
@@ -210,9 +208,7 @@ const ReportsIncome = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip
-                formatter={(value, name) => [`€${value.toFixed(2)}`, name]}
-              />
+              <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
               <Line
                 type="monotone"
                 dataKey="income2025"
@@ -231,22 +227,27 @@ const ReportsIncome = () => {
           </ResponsiveContainer>
         </div>
 
-      {/* Radar Chart */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h2 className="text-lg font-semibold mb-4">Income Sources</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: '#4B5563', fontSize: 12 }} />
-            <PolarRadiusAxis
-              angle={30}
-              domain={[0, Math.max(...radarData.map((item) => item.A)) || 100]} 
-            />
-            <Radar name="Income" dataKey="A" stroke="#2E2E2E" fill="#2ecfe3" fillOpacity={0.6} />
-            <Tooltip formatter={(value) => `€${value.toFixed(2)}`} />
-          </RadarChart>
-        </ResponsiveContainer>
-      </div>
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h2 className="text-lg font-semibold mb-4">Income Sources</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
+              <PolarRadiusAxis
+                angle={30}
+                domain={[0, Math.max(...radarData.map((i) => i.A)) || 100]}
+              />
+              <Radar
+                name="Income"
+                dataKey="A"
+                stroke="#2E2E2E"
+                fill="#2ecfe3"
+                fillOpacity={0.6}
+              />
+              <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Bar Chart */}
@@ -257,9 +258,7 @@ const ReportsIncome = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
-            <Tooltip
-              formatter={(value, name) => [`€${value.toFixed(2)}`, name]}
-            />
+            <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
             <Bar dataKey="income2025" fill="#b388eb" name="2025 Income" />
             <Bar dataKey="income2024" fill="#2ecfe3" name="2024 Income" />
           </BarChart>

@@ -6,8 +6,8 @@ import {
   Line,
   BarChart,
   Bar,
-  Radar,
   RadarChart,
+  Radar,
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
@@ -17,7 +17,6 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -30,7 +29,6 @@ const ReportsExpenses = () => {
   const [prevMonth, setPrevMonth] = useState(0);
   const [prevWeek, setPrevWeek] = useState(0);
   const [monthlyData, setMonthlyData] = useState([]);
-  const [monthlyData2024, setMonthlyData2024] = useState([]);
   const [radarData, setRadarData] = useState([]);
 
   const expenseCategories = [
@@ -48,16 +46,13 @@ const ReportsExpenses = () => {
         const res = await axios.get("/finance/transactions/");
         const transactions = res.data;
         const now = new Date();
-
         const currentYear = now.getFullYear();
 
         const startOfMonth = new Date(currentYear, now.getMonth(), 1);
-        const startOfLastMonth = new Date(currentYear, now.getMonth() - 1, 1);
-        const endOfLastMonth = new Date(currentYear, now.getMonth(), 0);
-
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
-
+        const startOfLastMonth = new Date(currentYear, now.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(currentYear, now.getMonth(), 0);
         const startOfLastWeek = new Date(startOfWeek);
         startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
         const endOfLastWeek = new Date(startOfWeek);
@@ -72,44 +67,33 @@ const ReportsExpenses = () => {
 
         const monthlySums = Array(12).fill(0);
         const monthlySums2024 = Array(12).fill(0);
-
         const categoryTotals = {};
-        expenseCategories.forEach((cat) => {
-          categoryTotals[cat] = 0;
-        });
+        expenseCategories.forEach((cat) => (categoryTotals[cat] = 0));
 
         transactions.forEach((t) => {
           const date = new Date(t.date);
-          const amount = parseFloat(t.amount);
+          const amt = parseFloat(t.amount);
           if (t.type === "expense") {
             if (date.getFullYear() === currentYear) {
-              yearTotal += amount;
-              if (date >= startOfMonth) monthTotal += amount;
-              if (date >= startOfWeek) weekTotal += amount;
-              monthlySums[date.getMonth()] += amount;
+              yearTotal += amt;
+              if (date >= startOfMonth) monthTotal += amt;
+              if (date >= startOfWeek) weekTotal += amt;
+              monthlySums[date.getMonth()] += amt;
             }
-
             if (date.getFullYear() === currentYear - 1) {
-              lastYearTotal += amount;
+              lastYearTotal += amt;
               if (date >= startOfLastMonth && date <= endOfLastMonth)
-                lastMonthTotal += amount;
+                lastMonthTotal += amt;
               if (date >= startOfLastWeek && date <= endOfLastWeek)
-                lastWeekTotal += amount;
-              monthlySums2024[date.getMonth()] += amount;
+                lastWeekTotal += amt;
+              monthlySums2024[date.getMonth()] += amt;
             }
-
             if (expenseCategories.includes(t.category)) {
-              categoryTotals[t.category] += amount;
+              categoryTotals[t.category] += amt;
             }
           }
         });
 
-        const radarFormatted = expenseCategories.map((cat) => ({
-          subject: cat,
-          A: categoryTotals[cat],
-        }));
-
-        setRadarData(radarFormatted);
         setExpenseYear(yearTotal);
         setExpenseMonth(monthTotal);
         setExpenseWeek(weekTotal);
@@ -117,17 +101,24 @@ const ReportsExpenses = () => {
         setPrevMonth(lastMonthTotal);
         setPrevWeek(lastWeekTotal);
 
-        const monthLabels = [
+        const months = [
           "Jan", "Feb", "Mar", "Apr", "May", "Jun",
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
-        const formattedMonthlyData = monthLabels.map((label, index) => ({
-          month: label,
-          expense2025: monthlySums[index],
-          expense2024: monthlySums2024[index],
-        }));
+        setMonthlyData(
+          months.map((m, i) => ({
+            month: m,
+            expense2025: monthlySums[i],
+            expense2024: monthlySums2024[i],
+          }))
+        );
 
-        setMonthlyData(formattedMonthlyData);
+        setRadarData(
+          expenseCategories.map((cat) => ({
+            subject: cat,
+            A: categoryTotals[cat],
+          }))
+        );
       } catch (err) {
         console.error("Error fetching expense data:", err);
       }
@@ -136,7 +127,7 @@ const ReportsExpenses = () => {
     fetchExpenseData();
   }, []);
 
-  const formatCurrency = (amount) => `€${amount.toFixed(2)}`;
+  const formatCurrency = (amt) => `€${amt.toFixed(2)}`;
   const getChange = (current, previous) => {
     if (previous === 0) return { percent: 100, direction: "up" };
     const change = ((current - previous) / previous) * 100;
@@ -161,47 +152,49 @@ const ReportsExpenses = () => {
     );
   };
 
-  const yearChange = getChange(expenseYear, prevYear);
+  const yearChange  = getChange(expenseYear, prevYear);
   const monthChange = getChange(expenseMonth, prevMonth);
-  const weekChange = getChange(expenseWeek, prevWeek);
+  const weekChange  = getChange(expenseWeek, prevWeek);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
         {[
-          { label: "This Year", value: expenseYear, change: yearChange },
+          { label: "This Year",  value: expenseYear,  change: yearChange  },
           { label: "This Month", value: expenseMonth, change: monthChange },
-          { label: "This Week", value: expenseWeek, change: weekChange },
+          { label: "This Week",  value: expenseWeek,  change: weekChange },
         ].map(({ label, value, change }, idx) => (
           <motion.div
             key={label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * idx }}
-            className={`p-6 rounded-xl shadow flex flex-col gap-2 ${
-              idx === 1 ? "bg-red-50" : "bg-white"
-            }`}
+            transition={{ delay: 0.1 * (idx + 1) }}
+            className="p-6 rounded-xl shadow bg-white flex flex-col items-center"
           >
-            <h3 className="text-gray-500 text-sm">Total Expenses {label}</h3>
-            <h2 className="text-2xl font-bold">{formatCurrency(value)}</h2>
-            <div className="flex items-center gap-1">
+            <h3 className="text-gray-500 text-sm mb-2">
+              {`Total Expenses ${label}`}
+            </h3>
+            <div className="text-2xl font-bold text-[#ef4444]">
+              {formatCurrency(value)}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
               <AnimatedArrow direction={change.direction} />
               <span
-                className={`${
-                  change.direction === "up"
-                    ? "text-red-500"
-                    : "text-green-500"
-                } text-sm`}
+                className={`text-sm ${
+                  change.direction === "up" ? "text-red-500" : "text-green-500"
+                }`}
               >
                 {change.direction === "up" ? "+" : "-"}
-                {change.percent}% vs last {label.split(" ")[1].toLowerCase()}
+                {change.percent}% vs last{" "}
+                {label.split(" ")[1].toLowerCase()}
               </span>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Line Chart */}
+      {/* Line + Radar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
         <div className="col-span-2 bg-white p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-4">Spending</h2>
@@ -210,7 +203,7 @@ const ReportsExpenses = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip formatter={(value, name) => [`€${value.toFixed(2)}`, name]} />
+              <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
               <Line
                 type="monotone"
                 dataKey="expense2025"
@@ -228,20 +221,24 @@ const ReportsExpenses = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
-        {/* Radar Chart */}
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-4">Expense Categories</h2>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
               <PolarGrid />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: '#4B5563', fontSize: 12 }} />
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
               <PolarRadiusAxis
                 angle={30}
-                domain={[0, Math.max(...radarData.map((item) => item.A)) || 100]}
+                domain={[0, Math.max(...radarData.map((i) => i.A)) || 100]}
               />
-              <Radar name="Expenses" dataKey="A" stroke="#b91c1c" fill="#f87171" fillOpacity={0.6} />
-              <Tooltip formatter={(value) => `€${value.toFixed(2)}`} />
+              <Radar
+                name="Expenses"
+                dataKey="A"
+                stroke="#b91c1c"
+                fill="#f87171"
+                fillOpacity={0.6}
+              />
+              <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
             </RadarChart>
           </ResponsiveContainer>
         </div>
@@ -255,7 +252,7 @@ const ReportsExpenses = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
-            <Tooltip formatter={(value, name) => [`€${value.toFixed(2)}`, name]} />
+            <Tooltip formatter={(v) => `€${v.toFixed(2)}`} />
             <Bar dataKey="expense2025" fill="#ff6b6b" name="2025 Expenses" />
             <Bar dataKey="expense2024" fill="#ffa987" name="2024 Expenses" />
           </BarChart>
