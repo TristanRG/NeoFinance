@@ -24,6 +24,11 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from users.auth_views import AdminTokenObtainPairView
+from users.views      import AdminUserViewSet
+
+admin_list   = AdminUserViewSet.as_view({'get':    'list'})
+admin_delete = AdminUserViewSet.as_view({'delete': 'destroy'})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,5 +40,8 @@ urlpatterns = [
     path('users/', include('users.urls')),    
     path('chat/', include('assistant.urls')),    
     path('news/', include('news.urls')),
-    path('assistant/', include('assistant.urls'))
+    path('assistant/', include('assistant.urls')),
+    path('admin-token/', AdminTokenObtainPairView.as_view(), name='admin-token'),
+    path('admin/users/',       admin_list,   name='admin-user-list'),
+    path('admin/users/<uuid:pk>/', admin_delete, name='admin-user-delete'),
 ]

@@ -22,8 +22,8 @@ from .models import CustomUser
 from .auth_serializers import AdminTokenObtainPairSerializer
 from rest_framework.views import APIView
 from rest_framework import viewsets 
-from rest_framework.permissions import IsAdminUser       
-from .authentication import AdminAwareJWTAuthentication
+from rest_framework.permissions import IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -97,8 +97,8 @@ def guest_signup(request):
     })
 
 class AdminUserViewSet(viewsets.ViewSet):
-    permission_classes    = [IsAdminUser]                   
-    authentication_classes = [AdminAwareJWTAuthentication] 
+    permission_classes    = [IsAdminUser]
+    authentication_classes = [JWTAuthentication]
 
     def list(self, request):
 
