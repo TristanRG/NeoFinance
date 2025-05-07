@@ -19,6 +19,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
+from .auth_serializers import AdminTokenObtainPairSerializer
+from rest_framework.views import APIView
+from rest_framework import viewsets 
+from rest_framework.permissions import IsAdminUser       
+from .authentication import AdminAwareJWTAuthentication
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -42,7 +47,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         data['username'] = self.user.username
+        data['isStaff'] = self.user.is_staff
         return data
+    
+class AdminTokenObtainPairView(TokenObtainPairView):
+    serializer_class = AdminTokenObtainPairSerializer
 
 class LoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -86,3 +95,21 @@ def guest_signup(request):
         'access': str(refresh.access_token),
         'user': {'id': str(user.id), 'username': user.username},
     })
+
+class AdminUserViewSet(viewsets.ViewSet):
+    permission_classes    = [IsAdminUser]                   
+    authentication_classes = [AdminAwareJWTAuthentication] 
+
+    def list(self, request):
+
+        users = CustomUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def destroy(self, request, pk=None):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)

@@ -13,3 +13,10 @@ class GuestAwareJWTAuthentication(JWTAuthentication):
             if age > settings.SIMPLE_JWT["GUEST_REFRESH_TOKEN_LIFETIME"].total_seconds():
                 raise InvalidToken("Guest token expired")
         return token
+
+class AdminAwareJWTAuthentication(JWTAuthentication):  
+    def get_validated_token(self, raw_token):
+        token = super().get_validated_token(raw_token)
+        if not token.get("is_admin"):
+            raise InvalidToken("Token is not an admin token")
+        return token
