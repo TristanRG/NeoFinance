@@ -9,31 +9,32 @@ import GuestAuth from '../context/GuestAuth';
 export default function Login({ onLogin }) {
   const { setAuth } = useContext(AuthContext); 
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError]       = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      console.log("Login response:", data);
-      localStorage.setItem('access_token', data.access);
+      console.log('Login response:', data);
+
+      localStorage.setItem('access_token',  data.access);
       localStorage.setItem('refresh_token', data.refresh);
-      
+
       setAuth({
-        access: data.access,
-        refresh: data.refresh,
+        access:   data.access,
+        refresh:  data.refresh,
         username: data.username,
-      });      
-      
-      navigate('/dashboard'); 
+        isStaff:  data.isStaff,      
+      });
+
+      navigate(data.isStaff ? '/admin' : '/dashboard');
     } catch (error) {
       setError('Invalid email or password');
       console.error('Login failed:', error.response?.data);
     }
   };
-
 
   return (
     <div className="flex items-center justify-center h-screen font-sans bg-gray-100">

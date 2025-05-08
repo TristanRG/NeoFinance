@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";  
 import { logout as performLogout } from "../api/axios";
 import ReportsMenu from "./ReportsMenu";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
-  const { auth, setAuth } = useContext(AuthContext);
+  const { auth, setAuth } = useContext(AuthContext);        
   const [logoError, setLogoError] = useState(false);
 
   const handleLogout = () => {
@@ -42,6 +42,11 @@ const Navbar = () => {
         <Link to="/dashboard" className="hover:text-[#2ecfe3]">Dashboard</Link>
         <Link to="/transactions" className="hover:text-[#2ecfe3]">Transactions</Link>
         <Link to="/assistant" className="hover:text-[#2ecfe3]">Assistant</Link>
+
+        {/* Only show Admin link if user is staff */}
+        {auth?.isStaff && (
+          <Link to="/admin" className="hover:text-[#2ecfe3]">Admin</Link>
+        )}
 
         {/* Reports Dropdown */}
         <div className="relative group">
