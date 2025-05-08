@@ -281,7 +281,7 @@ const DashboardPage = () => {
   </div>
 </div>
 
-            <div className="mt-6 col-span-2 h-[300px] bg-white rounded-2xl shadow-md p-6">
+<div className="mt-6 col-span-2 h-[300px] bg-white rounded-2xl shadow-md p-6">
   <h2 className="text-lg font-semibold mb-4">Monthly Spending</h2>
   <ResponsiveContainer width="100%" height="100%">
     <BarChart data={monthlyTrends}>
@@ -294,10 +294,10 @@ const DashboardPage = () => {
   </ResponsiveContainer>
 </div>
 
-          </div>
-        </div>
       </div>
     </div>
+  </div>
+</div>
   );
 };
 
