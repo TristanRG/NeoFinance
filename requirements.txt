@@ -4,7 +4,6 @@ djangorestframework
 psycopg2-binary
 django-cors-headers
 djangorestframework-simplejwt
-pillow
 openai
 dotenv
 requests
@@ -12,3 +11,4 @@ django-apscheduler
 django-scheduler
 pytest
 pytest-django
+googletrans
