@@ -204,11 +204,6 @@ const DashboardPage = () => {
                 >
                   See all &gt;
                 </p>
-                <input
-                  type="month"
-                  className="border p-2 rounded-md text-sm"
-                  defaultValue="2025-04"
-                />
               </div>
             </div>
             <div className="space-y-4">
